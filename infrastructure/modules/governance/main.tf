@@ -6,7 +6,7 @@ data "azurerm_client_config" "example" {
 
 resource "azurerm_role_definition" "aks_access" {
   name = "aks_access"
-  scope = "/subscriptions/2fac0f5e-befe-42b4-929d-e7d2c81351f3"
+  scope = "/subscriptions/<sub id>"
 
   permissions {
     actions = [

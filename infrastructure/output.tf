@@ -9,7 +9,3 @@ output "aks_cluster_name" {
 output "rg_name" {
   value = module.rg.rg_name
 }
-
-output "nginx_ingress_ip" {
-  value = module.kubernetes.nginx_ingress_ip
-}

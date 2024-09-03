@@ -13,9 +13,9 @@ terraform {
 
   # will need this to run ci/cd pipeline
   backend "azurerm" {
-    resource_group_name   = "tfstate"
-    storage_account_name  = "cethatfstate"
-    container_name        = "tfstate"
+    resource_group_name   = "terraformstatesRG"
+    storage_account_name  = "terraformstate737"
+    container_name        = "tfstates"
     key                   = "terraform.tfstate"
   }
 
@@ -28,6 +28,12 @@ provider "random" {}
 # azure provider
 provider "azurerm" {
   features {}
+  skip_provider_registration = true
+
+  client_id       = var.client_id
+  client_secret   = var.client_secret
+  subscription_id = var.subscription_id
+  tenant_id       = var.tenant_id
 }
 
 # kubernetes provider

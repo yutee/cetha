@@ -20,9 +20,7 @@ resource "helm_release" "nginx_ingress" {
 # api helm chart
 resource "helm_release" "cetha_api" {
   name       = "cetha-api"
-  chart      = "../../k8s/helm-chart/cetha-api"
-  namespace  = "cetha"
-  create_namespace = true
+  chart      = "../k8s/helm-chart/cetha-api"
   dependency_update = true
 
   set {
@@ -32,21 +30,3 @@ resource "helm_release" "cetha_api" {
 
   depends_on = [helm_release.nginx_ingress]
 }
-
-
-data "kubernetes_service" "nginx_ingress" {
-  metadata {
-    name      = "nginx-ingress-controller"
-    namespace = helm_release.nginx_ingress.namespace
-  }
-
-  depends_on = [helm_release.nginx_ingress]
-}
-
-# resource "null_resource" "wait_for_ip" {
-#   provisioner "local-exec" {
-#     command = "while [ -z $(kubectl get svc -n ${helm_release.nginx_ingress.metadata[0].namespace} ${data.kubernetes_service.nginx_ingress.metadata[0].name} -o jsonpath='{.status.loadBalancer.ingress[0].ip}') ]; do echo 'Waiting for IP...'; sleep 5; done"
-#   }
-
-#   depends_on = [helm_release.nginx_ingress]
-# }
