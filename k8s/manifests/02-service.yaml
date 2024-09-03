@@ -1,0 +1,16 @@
+# yaml file to create a service for cheta deployment
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: cetha-api
+  namespace: cetha
+spec:
+  selector:
+    app: cetha-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP
+

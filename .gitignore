@@ -1,0 +1,21 @@
+# Ignore Terraform state files
+infrastructure/*.tfstate
+infrastructure/*.tfstate.*
+infrastructure/terraform.tfstate.backup
+infrastructure/terraform.tfstate.backup.*
+
+# Ignore Terraform variables file
+infrastructure/terraform.tfvars
+
+# Ignore Terraform plugin directory
+infrastructure/.terraform/
+
+infrastructure/terraform.lock.hcl
+infrastructure/.terraform.lock.hcl
+
+# Ignore logs and temporary files
+infrastructure/*.log
+infrastructure/*.swp
+
+# Ignore playground directory
+00-playground/

@@ -1,0 +1,6 @@
+# yaml file to create a namespace
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cetha

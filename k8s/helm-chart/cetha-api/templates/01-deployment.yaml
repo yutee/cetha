@@ -1,0 +1,26 @@
+# yaml file to create a deployment for  a container from docker registry
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cetha-api
+  namespace: cetha
+  labels:
+    app: cetha-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cetha-api
+  template:
+    metadata:
+      labels:
+        app: cetha-api
+    spec:
+      containers:
+      - name: cetha-api
+        image: utibeokon/cetha:1.0
+        ports:
+        - containerPort: 3000
+
+        

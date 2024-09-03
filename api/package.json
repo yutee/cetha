@@ -1,0 +1,16 @@
+{
+    "name": "cheta",
+    "version": "1.0.0",
+    "description": "A simple Node.js API that returns the current time",
+    "main": "app.js",
+    "scripts": {
+      "start": "node app.js"
+    },
+    "dependencies": {
+      "express": "^4.18.2",
+      "winston": "^3.8.2"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.22"
+      }
+  }

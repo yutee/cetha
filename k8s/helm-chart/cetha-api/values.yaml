@@ -1,0 +1,4 @@
+image:
+  repository: cetha
+  tag: "1.0"
+  pullPolicy: IfNotPresent
