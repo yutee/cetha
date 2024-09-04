@@ -39,17 +39,17 @@ __CI/CD:__
 The [GitHub Actions workflow](.github/workflows/pipeline.yaml) is designed to:
 - __Build and Push Docker Image:__
 On changes to the application code, It builds a Docker image from a Dockerfile located in the ./api directory and pushes the image to Docker Hub.
-- __2. Update Helm Chart:__
+- __Update Helm Chart:__
 It updates the image tag in the Helm chart to match the ID of the current GitHub Actions workflow run.
-- __3. Deploy with Terraform:__
+- __Deploy with Terraform:__
 It deploys the updated Helm chart to a Kubernetes cluster using Terraform.
-- __4. Test Deployment:__
+- __Test Deployment:__
 It tests the deployed service by making an HTTP request to a specific endpoint.
 
 __Running the application:__
 To utilize this setup, there are things you need to have in place first:
 - An azure subscription
-- Terraform, Kubectl, Helm, AzCLI installed and configured
+- Terraform, Kubectl, AzCLI installed and configured
 - An azure service principal
 - A github account
 - Basic knowledge of CLI, Git and Github
@@ -131,19 +131,9 @@ kubectl port-forward -n cetha service/cetha-api 8080:80
 - __Push to Github and Inspect workflow__
 Push code to github, the workflow will trigger if there were any changes to the application code, infrastructure or kubernetes manifests. To successfully run the pipeline, you will need to update your repo with some required secrets. Get them and add to your github repo secrets.
 
-__Auth with Azure__
-ARM_CLIENT_ID
-ARM_CLIENT_SECRET
-ARM_SUBSCRIPTION_ID
-ARM_TENANT_ID
-AZURE_CREDENTIALS
-
-__Auth with dockerhub__
-DOCKERHUB_TOKEN
-DOCKER_USERNAME
-
-__Auth with github__
-TOKEN
+__Auth with Azure:__ - ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_SUBSCRIPTION_ID, ARM_TENANT_ID, AZURE_CREDENTIALS
+__Auth with dockerhub:__ - DOCKERHUB_TOKEN, DOCKER_USERNAME
+__Auth with github:__ - TOKEN
 
 After successful run, there are certain things that can be inspected to ensure pipeline ran properly.
 
