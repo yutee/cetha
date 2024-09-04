@@ -1,4 +1,4 @@
 image:
   repository: utibeokon/cetha
-  tag: "10704229346"
+  tag: "10704328913"
   pullPolicy: IfNotPresent
