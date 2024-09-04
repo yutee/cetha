@@ -102,9 +102,37 @@ jobs:
         needs: deploy
 
         steps:
-        - name: Checkout code
-          uses: actions/checkout@v3
+          - name: Checkout repository
+            uses: actions/checkout@v3
+      
+          - name: Set up kubectl
+            uses: azure/setup-kubectl@v3
+            with:
+              version: 'latest'
+      
+          - name: Authenticate with Azure
+            uses: azure/login@v1
+            with:
+              creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+          - name: Get Kubeconfig
+            run: |
+              az aks get-credentials --resource-group <your-resource-group> --name <your-cluster-name> --overwrite-existing
+      
+          - name: Check Pod Status
+            run: |
+              kubectl get pods --namespace <your-namespace> -o json | jq -r '.items[] | select(.status.phase != "Running") | "\(.metadata.name) is in \(.status.phase) phase"'
+      
+          - name: Fail if unhealthy pods exist
+            run: |
+              UNHEALTHY_PODS=$(kubectl get pods --namespace <your-namespace> -o json | jq -r '.items[] | select(.status.phase != "Running") | .metadata.name')
+              if [ -n "$UNHEALTHY_PODS" ]; then
+                echo "Unhealthy pods detected: $UNHEALTHY_PODS"
+                exit 1
+              fi
+            continue-on-error: false
 
-        - name: Test endpoint
-          run: |
-            curl "https://www.google.com/"
+          - name: Check endpoint
+            run: |
+              kubectl port-forward service/cetha-api 8080:80 -n cetha > port-forward.log 2>&1 &
+              echo "" >> ./endpoint_check.txt && curl 127.0.0.1:8080 >> ./endpoint_check.txt

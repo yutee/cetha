@@ -1,20 +1,148 @@
-## instructions on how to run and test your setup locally
+## Cetha - Automating the Deployment of a Simple Web API
 
-- explain the project... goals, deliverables
-- include architecture diagram, network architecture (security) and project folder (explain folder)
-- explain steps taken (approach) and tools used
-- explain the api
-- explain the terraform configuration
-- explain ci/cd
-- steps to run the project locally.
+### Overview
+The 'Cetha' project involves building and deploying a simple API on a Kubernetes cluster. The entire process is fully automated using Infrastructure as Code to provision all necessary resources, including Kubernetes components.
 
--include-
-Terraform excels at setting up and managing the infrastructure that Kubernetes runs on, especially with services such as AWS EKS. 
-Kubernetes provides the orchestration and management layer for your containerized applications, ensuring they run as intended. 
-Helm handles the application deployment on kubernetes, with helm it easy to package, deploy, update and manage applications in Kubernetes.
+_Architectural structure of the infrastructure:_
+    ![architecture diagram](./00-images/diagram.png)
 
-Terraform can deploy applications directly into Kubernetes clusters using its Helm provider, so technically speaking, you can manage both your infrastructure and applications through Terraform scripts. 
-For the purpose of this task, this is a core requirement.
--include-
+To complete the project, the following tools were used:
+    For this project I will be using:
+    __1. NodeJS__ - Web api
+    __2. Azure__ -  Cloud provider
+    __3. Azure Kubernetes cluster__
+    __4. Terraform__ - Infrastructure as Code
+    __5. Azure blob storage__ - Terraform emote backend
+    __6. Prometheus & Grafana__ - Monitoring
+    __7. Github Actions - Continous__ Integration/Deployment
 
-using helm as oposed to using in line kubernetes and using kubectl to apply on my cluster.
+Terraform is ideal for setting up and managing the infrastructure for Kubernetes, particularly with services like AWS EKS. Kubernetes orchestrates and manages containerized applications, while Helm simplifies application deployment, updates, and management. By using Terraform's Helm provider, you can manage both infrastructure and application deployments within a single Terraform script, making it a core requirement for this task. Prometheus and Grafana are employed to observe the state of the cluster.
+All resources are provisioned to AKS cluster on Azure.
+Github actions to automate continous integration and delivery process.
+
+### Deliverables
+
+__The API__
+    The [NodeJS application](./api/app.js) is a simple api that returns the current time when queried. 
+
+__Terraform__
+    The [Terraform configuration](./infrastructure/) will:
+    __1.__ Deploy resources to Azure to create a Kubernetes cluster, Network, IAM roles and policies.
+    __2.__ Authenticate with the created cluster using Helm to install application chart, nginx ingress controller to route traffic to the cluster and prometheus stack that will handle monitoring in the cluster.
+
+__CI/CD__
+    The [GitHub Actions workflow](.github/workflows/pipeline.yaml) is designed to:
+    __1. Build and Push Docker Image:__
+        On changes to the application code, It builds a Docker image from a Dockerfile located in the ./api directory and pushes the image to Docker Hub.
+    __2. Update Helm Chart:__
+        It updates the image tag in the Helm chart to match the ID of the current GitHub Actions workflow run.
+    __3. Deploy with Terraform:__
+        It deploys the updated Helm chart to a Kubernetes cluster using Terraform.
+    __4. Test Deployment:__
+        It tests the deployed service by making an HTTP request to a specific endpoint.
+
+__Running the application__
+To utilize this setup, there are things you need to have in place first:
+    - An azure subscription
+    - Terraform, Kubectl, Helm, AzCLI installed and configured
+    - An azure service principal
+    - A github account
+    - Basic knowledge of CLI, Git and Github
+
+__Steps:__
+- __Clone the repository__
+```
+git clone <repo-url>
+cd <repo-url>
+```
+- __Test the api locally (optional)__
+``` bash
+cd api
+npm install
+
+# start the api server
+node app.js
+
+#output: api is listening at http://localhost:3000
+```
+
+- __Authenticate terraform with your azure account__
+```bash
+cd infrasctructure
+
+# add env cariables
+echo "TF_VAR_client_id=<CLIENT_ID>
+echo "TF_VAR_client_secret=<CLIENT_SECRET
+echo "TF_VAR_subscription_id=<ARM_SUBSCRIPTION_ID>
+echo "TF_VAR_tenant_id=<ARM_TENANT_ID>
+```
+
+Considering nature of the project, no external variables was needed. If yo want to customize any settting at this point, you should go through the code.
+
+- __Set remote backend__
+Azure blob storage was used as remote backend. Open the [providers.tf](./infrastructure/providers.tf) file and edit this block.
+```
+  backend "azurerm" {
+    resource_group_name   = <resource-group>
+    storage_account_name  = <stoarage-account"
+    container_name        = <blob-container>
+    key                   = "terraform.tfstate"
+  }
+```
+
+- __Run the application__
+```bash
+terraform init
+
+# if you made any changes to the code, you should verify
+terrafrom validate
+
+terraform plan
+terraform apply -auto-approve
+```
+
+- __Test and explore__
+After complete run, ther will be an output with the resource group and aks cluster created, retreive them.
+
+```bash
+# configure kubectl
+az aks get-credentials --resource-group <resource-group> --name <aks-cluster> --overwrite-existing
+
+# explore cluster
+# see all running pods, services and deployments
+kubectl get all -A
+
+#inspect spplication resources
+kubectl get all -n cetha
+
+# inspect ingress/retreive ip address (useful for dns mapping)
+kubectl get ingress -n cetha
+
+# inspect the api on your local machine
+kubectl port-forward -n cetha service/cetha-api 8080:80
+
+```
+
+- __Push to Github and Inspect workflow__
+Push code to github, the workflow will trigger if there were any changes to the application code, infrastructure or kubernetes manifests.
+After successful run, there are certain things that can be inspected to ensure pipeline ran properly.
+
+_inspecting app pods_
+![pods](./00-images/Screenshot%202024-09-03%20at%2022.59.23.png)
+
+_succesful pipeline run_
+![workslow](./00-images/Screenshot%202024-09-04%20at%2003.50.15.png)
+
+_updated tag_
+![tag](./00-images/Screenshot%202024-09-04%20at%2003.55.54.png)
+
+_updated tag on dockerhub_
+![tag](./00-images/Screenshot%202024-09-04%20at%2003.57.28.png)
+
+_text file with time endpoint was queried_
+![tendpointag](./00-images/)
+
+-__Improvements__
+As with all software, there is always updates and patches, and this project is no different. There are certain areas that can be worked on:
+- SSL Certificates
+- Alerting with Alert manager

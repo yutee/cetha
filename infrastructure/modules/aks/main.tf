@@ -9,7 +9,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
     node_count      = 1
     vm_size         = "Standard_B2ms"
     os_disk_size_gb = 50
-    temporary_name_for_rotation = "tempdefault" 
+    temporary_name_for_rotation = "tempdefault"
+    # vnet_subnet_id  = var.subnet_id
     # enable_node_public_ip = true      # bad for security
     upgrade_settings {
       max_surge       = "10%"
