@@ -141,7 +141,8 @@ _updated tag on dockerhub_
 ![tag](./00-images/Screenshot%202024-09-04%20at%2003.57.28.png)
 
 _text file with time endpoint was queried_
-![tendpointag](./00-images/)
+![tendpointag](./00-images/Screenshot%202024-09-04%20at%2016.11.29.png)
+The eendpoint_check.txt file uploaded as an artifact.
 
 -__Improvements__
 As with all software, there is always updates and patches, and this project is no different. There are certain areas that can be worked on:
