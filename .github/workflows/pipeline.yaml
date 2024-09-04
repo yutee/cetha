@@ -137,4 +137,8 @@ jobs:
               kubectl port-forward service/cetha-api 8080:80 -n cetha > port-forward.log 2>&1 &
               sleep 5
               echo "" >> ./endpoint_check.txt && curl 127.0.0.1:8080 >> ./endpoint_check.txt
-            continue-on-error: true
+          - name: Upload endpoint_check.txt as artifact
+            uses: actions/upload-artifact@v3
+            with:
+              name: endpoint-check
+              path: ./endpoint_check.txt
