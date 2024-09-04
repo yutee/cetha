@@ -124,7 +124,8 @@ kubectl port-forward -n cetha service/cetha-api 8080:80
 ```
 
 - __Push to Github and Inspect workflow__
-Push code to github, the workflow will trigger if there were any changes to the application code, infrastructure or kubernetes manifests.
+Push code to github, the workflow will trigger if there were any changes to the application code, infrastructure or kubernetes manifests. To successfully run the pipeline, you will need to update your repo with some required secrets.
+
 After successful run, there are certain things that can be inspected to ensure pipeline ran properly.
 
 _inspecting app pods_
