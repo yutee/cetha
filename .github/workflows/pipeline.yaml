@@ -9,7 +9,7 @@ on:
     paths-ignore:
       - 'README.md'
       - '00-images/**'
-      - 'helm-chart/**'
+      - 'k8s/helm-chart/**'
   workflow_dispatch:
 
 jobs:
