@@ -79,14 +79,17 @@ jobs:
           uses: hashicorp/setup-terraform@v3
 
         - name: Terraform Init
+          working-directory: ./infrastructure
           run: | 
             terraform init
             echo $TF_VAR_subscription_id
 
         - name: Terraform Plan
+          working-directory: ./infrastructure
           run: terraform plan
 
         - name: Terraform Apply
+          working-directory: ./infrastructure
           run: terraform apply -auto-approve
 
     test:
