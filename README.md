@@ -7,18 +7,23 @@ _Architectural structure of the infrastructure:_
     ![architecture diagram](./00-images/diagram.png)
 
 To complete the project, the following tools were used:
-    For this project I will be using:
-    __1. NodeJS__ - Web api
-    __2. Azure__ -  Cloud provider
-    __3. Azure Kubernetes cluster__
-    __4. Terraform__ - Infrastructure as Code
-    __5. Azure blob storage__ - Terraform emote backend
-    __6. Prometheus & Grafana__ - Monitoring
-    __7. Github Actions - Continous__ Integration/Deployment
+For this project I will be using:
+- __NodeJS__ - Web api
+- __Azure__ -  Cloud provider
+- __Azure Kubernetes cluster__
+- __Terraform__ - Infrastructure as Code
+- __Azure blob storage__ - Terraform emote backend
+- __Prometheus & Grafana__ - Monitoring
+- __Github Actions - Continous__ Integration/Deployment
 
 Terraform is ideal for setting up and managing the infrastructure for Kubernetes, particularly with services like AWS EKS. Kubernetes orchestrates and manages containerized applications, while Helm simplifies application deployment, updates, and management. By using Terraform's Helm provider, you can manage both infrastructure and application deployments within a single Terraform script, making it a core requirement for this task. Prometheus and Grafana are employed to observe the state of the cluster.
 All resources are provisioned to AKS cluster on Azure.
 Github actions to automate continous integration and delivery process.
+
+The project folder has three major directories:
+- `api` - the nodejs(express) api code and corresponding dockerfile
+- `insfrastructure` - terraform configurations
+- `k8s` - kubernetes manifests and the api app packaged in a helm-chart
 
 ### Deliverables
 
