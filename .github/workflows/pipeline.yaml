@@ -117,7 +117,7 @@ jobs:
       
           - name: Get Kubeconfig
             run: |
-              az aks get-credentials --resource-group <your-resource-group> --name <your-cluster-name> --overwrite-existing
+              az aks get-credentials --resource-group cetha-46-RG --name cetha-api-AKS --overwrite-existing
       
           - name: Check Pod Status
             run: |
