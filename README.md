@@ -6,7 +6,7 @@
 - explain the api
 - explain the terraform configuration
 - explain ci/cd
-- explain steps to run the project locally.
+- steps to run the project locally.
 
 -include-
 Terraform excels at setting up and managing the infrastructure that Kubernetes runs on, especially with services such as AWS EKS. 

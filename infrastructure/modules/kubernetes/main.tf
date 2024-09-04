@@ -22,11 +22,8 @@ resource "helm_release" "cetha_api" {
   name       = "cetha-api"
   chart      = "../k8s/helm-chart/cetha-api"
   dependency_update = true
-
-  set {
-    name  = "image.repository"
-    value = "utibeokon/cheta:1.0"
-  }
+  wait    = true
+  timeout = 600
 
   depends_on = [helm_release.nginx_ingress]
 }

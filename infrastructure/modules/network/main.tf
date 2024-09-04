@@ -38,16 +38,32 @@ resource "azurerm_subnet_nat_gateway_association" "nat_gateway_subnet_associatio
   nat_gateway_id = azurerm_nat_gateway.nat_gateway.id
 }
 
-resource "azurerm_firewall" "firewall" {
-  name                = "cetha-FW"
-  location            = var.rg_location
-  resource_group_name = var.rg_name
-  sku_name            = "AZFW_VNet"
-  sku_tier            = "Basic"
-}
+# resource "azurerm_firewall" "firewall" {
+#   name                = "cetha-FW"
+#   location            = var.rg_location
+#   resource_group_name = var.rg_name
+#   sku_name            = "AZFW_VNet"
+#   sku_tier            = "Basic"
+# }
 
-resource "azurerm_firewall_policy" "firewall_policy" {
-  name                = "cetha-firewall-policy"
-  resource_group_name = var.rg_name
-  location            = var.rg_location
-}
+# resource "azurerm_firewall_policy" "firewall_policy" {
+#   name                = "cetha-firewall-policy"
+#   resource_group_name = var.rg_name
+#   location            = var.rg_location
+# }
+
+# resource "azurerm_firewall_network_rule_collection" "allow_ingress_ports" {
+#   name                = "allow-ingress-ports"
+#   resource_group_name = var.rg_name
+#   azure_firewall_name = azurerm_firewall.firewall.name
+#   priority            = 101
+#   action              = "Allow"
+
+#   rule {
+#     name                     = "allow-http"
+#     protocols                 = ["TCP"]
+#     source_addresses         = ["*"]
+#     destination_addresses    = ["10.0.0.0/24"]  // Your subnet or specific IP
+#     destination_ports        = ["80"]
+#   }
+# }

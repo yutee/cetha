@@ -19,7 +19,8 @@ spec:
     spec:
       containers:
       - name: cetha-api
-        image: utibeokon/cetha:1.0
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
         ports:
         - containerPort: 3000
 
