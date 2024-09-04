@@ -22,32 +22,32 @@ Github actions to automate continous integration and delivery process.
 
 ### Deliverables
 
-__The API__
-    The [NodeJS application](./api/app.js) is a simple api that returns the current time when queried. 
+__The API:__
+The [NodeJS application](./api/app.js) is a simple api that returns the current time when queried.
 
-__Terraform__
-    The [Terraform configuration](./infrastructure/) will:
-    __1.__ Deploy resources to Azure to create a Kubernetes cluster, Network, IAM roles and policies.
-    __2.__ Authenticate with the created cluster using Helm to install application chart, nginx ingress controller to route traffic to the cluster and prometheus stack that will handle monitoring in the cluster.
+__Terraform:__
+The [Terraform configuration](./infrastructure/) will:
+- Deploy resources to Azure to create a Kubernetes cluster, Network, IAM roles and policies.
+- Authenticate with the created cluster using Helm to install application chart, nginx ingress controller to route traffic to the cluster and prometheus stack that will handle monitoring in the cluster.
 
-__CI/CD__
-    The [GitHub Actions workflow](.github/workflows/pipeline.yaml) is designed to:
-    __1. Build and Push Docker Image:__
-        On changes to the application code, It builds a Docker image from a Dockerfile located in the ./api directory and pushes the image to Docker Hub.
-    __2. Update Helm Chart:__
-        It updates the image tag in the Helm chart to match the ID of the current GitHub Actions workflow run.
-    __3. Deploy with Terraform:__
-        It deploys the updated Helm chart to a Kubernetes cluster using Terraform.
-    __4. Test Deployment:__
-        It tests the deployed service by making an HTTP request to a specific endpoint.
+__CI/CD:__
+The [GitHub Actions workflow](.github/workflows/pipeline.yaml) is designed to:
+- __Build and Push Docker Image:__
+On changes to the application code, It builds a Docker image from a Dockerfile located in the ./api directory and pushes the image to Docker Hub.
+- __2. Update Helm Chart:__
+It updates the image tag in the Helm chart to match the ID of the current GitHub Actions workflow run.
+- __3. Deploy with Terraform:__
+It deploys the updated Helm chart to a Kubernetes cluster using Terraform.
+- __4. Test Deployment:__
+It tests the deployed service by making an HTTP request to a specific endpoint.
 
-__Running the application__
+__Running the application:__
 To utilize this setup, there are things you need to have in place first:
-    - An azure subscription
-    - Terraform, Kubectl, Helm, AzCLI installed and configured
-    - An azure service principal
-    - A github account
-    - Basic knowledge of CLI, Git and Github
+- An azure subscription
+- Terraform, Kubectl, Helm, AzCLI installed and configured
+- An azure service principal
+- A github account
+- Basic knowledge of CLI, Git and Github
 
 __Steps:__
 - __Clone the repository__
@@ -124,7 +124,21 @@ kubectl port-forward -n cetha service/cetha-api 8080:80
 ```
 
 - __Push to Github and Inspect workflow__
-Push code to github, the workflow will trigger if there were any changes to the application code, infrastructure or kubernetes manifests. To successfully run the pipeline, you will need to update your repo with some required secrets.
+Push code to github, the workflow will trigger if there were any changes to the application code, infrastructure or kubernetes manifests. To successfully run the pipeline, you will need to update your repo with some required secrets. Get them and add to your github repo secrets.
+
+__Auth with Azure__
+ARM_CLIENT_ID
+ARM_CLIENT_SECRET
+ARM_SUBSCRIPTION_ID
+ARM_TENANT_ID
+AZURE_CREDENTIALS
+
+__Auth with dockerhub__
+DOCKERHUB_TOKEN
+DOCKER_USERNAME
+
+__Auth with github__
+TOKEN
 
 After successful run, there are certain things that can be inspected to ensure pipeline ran properly.
 
@@ -142,9 +156,10 @@ _updated tag on dockerhub_
 
 _text file with time endpoint was queried_
 ![tendpointag](./00-images/Screenshot%202024-09-04%20at%2016.11.29.png)
-The eendpoint_check.txt file uploaded as an artifact.
+The endpoint_check.txt file uploaded as an artifact. It contains the result gotten when api is queried.
 
--__Improvements__
+- __Possible Improvements__
 As with all software, there is always updates and patches, and this project is no different. There are certain areas that can be worked on:
 - SSL Certificates
 - Alerting with Alert manager
+- Implement wider range of policies
