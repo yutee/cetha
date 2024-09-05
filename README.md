@@ -76,10 +76,10 @@ node app.js
 cd infrasctructure
 
 # add env cariables
-echo "TF_VAR_client_id=<CLIENT_ID>
-echo "TF_VAR_client_secret=<CLIENT_SECRET
-echo "TF_VAR_subscription_id=<ARM_SUBSCRIPTION_ID>
-echo "TF_VAR_tenant_id=<ARM_TENANT_ID>
+echo TF_VAR_client_id=<CLIENT_ID>
+echo TF_VAR_client_secret=<CLIENT_SECRET>
+echo TF_VAR_subscription_id=<SUBSCRIPTION_ID>
+echo TF_VAR_tenant_id=<TENANT_ID>
 ```
 
 Considering nature of the project, no external variables was needed. If yo want to customize any settting at this point, you should go through the code.
@@ -89,7 +89,7 @@ Azure blob storage was used as remote backend. Open the [providers.tf](./infrast
 ```
   backend "azurerm" {
     resource_group_name   = <resource-group>
-    storage_account_name  = <stoarage-account"
+    storage_account_name  = <stoarage-account>
     container_name        = <blob-container>
     key                   = "terraform.tfstate"
   }
@@ -129,11 +129,7 @@ kubectl port-forward -n cetha service/cetha-api 8080:80
 ```
 
 - __Push to Github and Inspect workflow__
-Push code to github, the workflow will trigger if there were any changes to the application code, infrastructure or kubernetes manifests. To successfully run the pipeline, you will need to update your repo with some required secrets. Get them and add to your github repo secrets.
-
-__Auth with Azure:__ - ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_SUBSCRIPTION_ID, ARM_TENANT_ID, AZURE_CREDENTIALS
-__Auth with dockerhub:__ - DOCKERHUB_TOKEN, DOCKER_USERNAME
-__Auth with github:__ - TOKEN
+Push code to github, the workflow will trigger if there were any changes to the application code, infrastructure or kubernetes manifests. To successfully run the pipeline, you will need to update your repo with some required secrets. Get them and add to your github repo secrets. __Auth with Azure:__ - ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_SUBSCRIPTION_ID, ARM_TENANT_ID, AZURE_CREDENTIALS. __Auth with dockerhub:__ - DOCKERHUB_TOKEN, DOCKER_USERNAME. __Auth with github:__ - TOKEN
 
 After successful run, there are certain things that can be inspected to ensure pipeline ran properly.
 
@@ -153,8 +149,8 @@ _text file with time endpoint was queried_
 ![tendpointag](./00-images/Screenshot%202024-09-04%20at%2016.11.29.png)
 The endpoint_check.txt file uploaded as an artifact. It contains the result gotten when api is queried.
 
-- __Possible Improvements__
+- __Possible Improvements:__
 As with all software, there is always updates and patches, and this project is no different. There are certain areas that can be worked on:
-- SSL Certificates
-- Alerting with Alert manager
-- Implement wider range of policies
+    - TSL/SSL Certificates
+    - Alerting using Prometheus/Alertmanager
+    - Implement wider range of policies using open policy agent
