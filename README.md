@@ -84,7 +84,7 @@ echo TF_VAR_tenant_id=<TENANT_ID>
 
 Considering nature of the project, no external variables was needed. If yo want to customize any settting at this point, you should go through the code.
 
-- __Set remote backend__
+- __Set remote backend:__
 Azure blob storage was used as remote backend. Open the [providers.tf](./infrastructure/providers.tf) file and edit this block.
 ```
   backend "azurerm" {
@@ -95,7 +95,7 @@ Azure blob storage was used as remote backend. Open the [providers.tf](./infrast
   }
 ```
 
-- __Run the application__
+- __Run the application:__
 ```bash
 terraform init
 
