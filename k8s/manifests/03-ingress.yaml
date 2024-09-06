@@ -15,6 +15,6 @@ spec:
             path: /
             backend:
               service:
-                name: cetha-api
+                name: cetha-service
                 port:
                   number: 80
