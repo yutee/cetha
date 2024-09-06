@@ -1,7 +1,8 @@
-package terraform
+package terraform.analysis.v1
 
-deny[port] {
-  some r
-  r = input.resources["azurerm_network_security_group"].values.ingress_ports[_] == port
-  port == 22  # denies access to ssh port
+# rule to deny access to port 22
+deny[msg] {
+  input.resource_changes[_].type == "azurerm_network_security_rule"
+  input.resource_changes[_].change.after.destination_port_range == "22"
+  msg = "Access to port 22 (SSH) is not allowed."
 }

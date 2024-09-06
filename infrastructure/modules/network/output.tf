@@ -5,7 +5,3 @@ output "vnet_id" {
 output "subnet_id" {
   value = azurerm_subnet.subnet.id
 }
-
-output "nat_gateway_id" {
-  value = azurerm_nat_gateway.nat_gateway.id
-}

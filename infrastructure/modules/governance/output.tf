@@ -1,3 +1,3 @@
-output "role_id" {
-  value = azurerm_role_definition.aks_access.id
+output "user_principal_name" {
+  value = azuread_user.aks_user.user_principal_name
 }

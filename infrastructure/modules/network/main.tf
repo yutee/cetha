@@ -1,69 +1,77 @@
 resource "azurerm_virtual_network" "vnet" {
-  name                = "cetha-VNET"
-  address_space       = ["10.0.0.0/16"]
+  name                = var.vnet_name
+  address_space       = var.vnet_cidr
   location            = var.rg_location
   resource_group_name = var.rg_name
 }
 
 resource "azurerm_subnet" "subnet" {
-  name                 = "cetha-subnet"
+  name                 = var.subnet_name
   resource_group_name  = var.rg_name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.0.1.0/24"]
+  address_prefixes     = var.subnet_cidr
+  depends_on           = [ azurerm_virtual_network.vnet ]
 }
 
-resource "azurerm_public_ip" "nat_gateway_ip" {
-  name                = "nat-public-ip"
+# Define the Network Security Group
+resource "azurerm_network_security_group" "nsg" {
+  name                = var.nsg_name
   location            = var.rg_location
   resource_group_name = var.rg_name
-  allocation_method   = "Static"
-  sku                 = "Standard"
+
+  # Inbound Security Rules
+  security_rule {
+    name                       = "allow-http"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"   # HTTP port
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  # Add other rules as needed, for example, for HTTPS (port 443)
+  security_rule {
+    name                       = "allow-https"
+    priority                   = 101
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443"  # HTTPS port
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+    security_rule {
+    name                       = "allow-https"
+    priority                   = 101
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "3000"  # APIs port
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+    security_rule {
+    name                       = "allow-all-outbound"
+    priority                   = 102
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 }
 
-resource "azurerm_nat_gateway" "nat_gateway" {
-  name                = "cetha-nat-gateway"
-  location            = var.rg_location
-  resource_group_name = var.rg_name
-  sku_name            = "Standard"
-  idle_timeout_in_minutes = 5
+# Associate the NSG with the Subnet
+resource "azurerm_subnet_network_security_group_association" "subnet_nsg_association" {
+  subnet_id                 = azurerm_subnet.subnet.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
 }
-
-resource "azurerm_nat_gateway_public_ip_association" "nat_gateway_ip_association" {
-  nat_gateway_id       = azurerm_nat_gateway.nat_gateway.id
-  public_ip_address_id = azurerm_public_ip.nat_gateway_ip.id
-}
-
-resource "azurerm_subnet_nat_gateway_association" "nat_gateway_subnet_association" {
-  subnet_id      = azurerm_subnet.subnet.id
-  nat_gateway_id = azurerm_nat_gateway.nat_gateway.id
-}
-
-# resource "azurerm_firewall" "firewall" {
-#   name                = "cetha-FW"
-#   location            = var.rg_location
-#   resource_group_name = var.rg_name
-#   sku_name            = "AZFW_VNet"
-#   sku_tier            = "Basic"
-# }
-
-# resource "azurerm_firewall_policy" "firewall_policy" {
-#   name                = "cetha-firewall-policy"
-#   resource_group_name = var.rg_name
-#   location            = var.rg_location
-# }
-
-# resource "azurerm_firewall_network_rule_collection" "allow_ingress_ports" {
-#   name                = "allow-ingress-ports"
-#   resource_group_name = var.rg_name
-#   azure_firewall_name = azurerm_firewall.firewall.name
-#   priority            = 101
-#   action              = "Allow"
-
-#   rule {
-#     name                     = "allow-http"
-#     protocols                 = ["TCP"]
-#     source_addresses         = ["*"]
-#     destination_addresses    = ["10.0.0.0/24"]  // Your subnet or specific IP
-#     destination_ports        = ["80"]
-#   }
-# }
