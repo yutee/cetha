@@ -1,17 +1,18 @@
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = "cetha-api-AKS"
+  name                = var.aks_name
   location            = var.rg_location
   resource_group_name = var.rg_name
-  dns_prefix          = "cetha-api"
+  dns_prefix          = var.dns_prefix
 
   default_node_pool {
-    name            = "default"
-    node_count      = 1
-    vm_size         = "Standard_B2ms"
-    os_disk_size_gb = 50
+    name            = var.node_pool_name
+    node_count      = var.node_count
+    vm_size         = var.vm_size
+    os_disk_size_gb = var.os_disk_size_gb
+    vnet_subnet_id  = var.subnet_id
+
     temporary_name_for_rotation = "tempdefault"
-    # vnet_subnet_id  = var.subnet_id
-    # enable_node_public_ip = true      # bad for security
+
     upgrade_settings {
       max_surge       = "10%"
     }
@@ -27,4 +28,5 @@ resource "azurerm_kubernetes_cluster" "aks" {
 data "azurerm_kubernetes_cluster" "aks" {
   name                = azurerm_kubernetes_cluster.aks.name
   resource_group_name = azurerm_kubernetes_cluster.aks.resource_group_name
+  depends_on          = [azurerm_kubernetes_cluster.aks]
 }

@@ -1,6 +1,6 @@
 # cicd pipeline that builds an image and pushes it to a registry and then deploys it to a k8s cluster using helm inside terraform
 
-name: Pipeline
+name: Build and Deploy Cetha API Infrastructure
 
 on:
   push:
@@ -13,6 +13,21 @@ on:
   workflow_dispatch:
 
 jobs:
+
+    static_code_analysis:
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+
+        - name: Install Kubeconform
+          run: |
+           curl -L -o /usr/local/bin/kubeconform https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64
+           chmod +x /usr/local/bin/kubeconform
+
+        - name: Validate Kubernetes manifests
+          run: kubeconform -strict -summary k8s/manifests/*.yaml
 
     build:
         runs-on: ubuntu-latest
@@ -68,6 +83,8 @@ jobs:
              ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
              ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
              ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+             RESOURCE_GROUP: cetha-57-RG
+             AKS_CLUSTER: cetha-api-AKS 
 
         steps:
         - name: Checkout code
@@ -87,11 +104,19 @@ jobs:
           working-directory: ./infrastructure
           run: | 
             terraform init
-            echo $TF_VAR_subscription_id
 
         - name: Terraform Plan
           working-directory: ./infrastructure
-          run: terraform plan
+          run: terraform plan -out=tfplan
+
+        - name: Generate Plan JSON
+          run: terraform show -json tfplan > tfplan.json
+          
+        - name: Policy Check
+          run: |
+            curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64
+            chmod +x opa
+            ./opa eval --input tfplan.json --data _policy.rego "data.terraform.analysis.v1.deny"          
 
         - name: Terraform Apply
           working-directory: ./infrastructure
@@ -117,15 +142,15 @@ jobs:
       
           - name: Get Kubeconfig
             run: |
-              az aks get-credentials --resource-group cetha-46-RG --name cetha-api-AKS --overwrite-existing
+              az aks get-credentials --resource-group $RESOURCE_GROUP --name cetha-api-AKS $AKS_CLUSTER --overwrite-existing
       
           - name: Check Pod Status
             run: |
-              kubectl get pods --namespace <your-namespace> -o json | jq -r '.items[] | select(.status.phase != "Running") | "\(.metadata.name) is in \(.status.phase) phase"'
+              kubectl get pods --namespace cetha -o json | jq -r '.items[] | select(.status.phase != "Running") | "\(.metadata.name) is in \(.status.phase) phase"'
       
           - name: Fail if unhealthy pods exist
             run: |
-              UNHEALTHY_PODS=$(kubectl get pods --namespace <your-namespace> -o json | jq -r '.items[] | select(.status.phase != "Running") | .metadata.name')
+              UNHEALTHY_PODS=$(kubectl get pods --namespace cetha -o json | jq -r '.items[] | select(.status.phase != "Running") | .metadata.name')
               if [ -n "$UNHEALTHY_PODS" ]; then
                 echo "Unhealthy pods detected: $UNHEALTHY_PODS"
                 exit 1
@@ -137,8 +162,9 @@ jobs:
               kubectl port-forward service/cetha-api 8080:80 -n cetha > port-forward.log 2>&1 &
               sleep 5
               echo "" >> ./endpoint_check.txt && curl 127.0.0.1:8080 >> ./endpoint_check.txt
+
           - name: Upload endpoint_check.txt as artifact
-            uses: actions/upload-artifact@v3
+            uses: actions/upload-artifact@v4
             with:
               name: endpoint-check
               path: ./endpoint_check.txt
