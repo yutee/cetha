@@ -4,7 +4,7 @@ resource "random_integer" "number" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "cetha-${random_integer.number.id}-RG"
+  name     = "cetha-api-RG"
   location = "East US 2"
 
   tags = {
