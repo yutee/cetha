@@ -46,8 +46,8 @@ resource "azurerm_network_security_group" "nsg" {
   }
 
     security_rule {
-    name                       = "allow-https"
-    priority                   = 101
+    name                       = "allow-port_3000"
+    priority                   = 102
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -59,7 +59,7 @@ resource "azurerm_network_security_group" "nsg" {
 
     security_rule {
     name                       = "allow-all-outbound"
-    priority                   = 102
+    priority                   = 103
     direction                  = "Outbound"
     access                     = "Allow"
     protocol                   = "*"

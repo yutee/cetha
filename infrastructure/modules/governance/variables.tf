@@ -11,7 +11,7 @@ variable "subscription_id" {
 variable "user_email" {
   description = "The user's login email (user principal name)"
   type        = string
-  default     = "newuser@yourdomain.com"
+  default     = "cethauser@utibeokon.me"
 }
 
 variable "password" {

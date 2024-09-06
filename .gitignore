@@ -19,3 +19,6 @@ infrastructure/*.swp
 
 # Ignore playground directory
 00-playground/
+
+tfplan
+infrastructure/tfplan.json

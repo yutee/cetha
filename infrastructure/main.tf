@@ -29,7 +29,7 @@ module "aks" {
   rg_location         = module.rg.rg_location
   aks_name            = "cetha-api-AKS"
   dns_prefix          = "cetha-api"
-  node_pool_name      = "cetha-api-pool"
+  node_pool_name      = "default"
   node_count          = 1
   vm_size             = "Standard_B2ms"
   os_disk_size_gb     = 50
