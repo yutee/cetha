@@ -166,7 +166,7 @@ jobs:
 
           - name: Check endpoint
             run: |
-              kubectl port-forward service/cetha-api 8080:80 -n cetha > port-forward.log 2>&1 &
+              kubectl port-forward service/cetha-service 8080:80 -n cetha > port-forward.log 2>&1 &
               sleep 5
               echo "" >> ./endpoint_check.txt && curl 127.0.0.1:8080 >> ./endpoint_check.txt
 
