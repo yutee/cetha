@@ -87,8 +87,6 @@ jobs:
              ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
              ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
              ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-             RESOURCE_GROUP: cetha-api-RG
-             AKS_CLUSTER: cetha-api-AKS 
 
         steps:
         - name: Checkout code
@@ -131,6 +129,9 @@ jobs:
     test:
         runs-on: ubuntu-latest
         needs: deploy
+        env:
+          RESOURCE_GROUP: cetha-api-RG
+          AKS_CLUSTER: cetha-api-AKS
 
         steps:
           - name: Checkout repository
@@ -148,7 +149,7 @@ jobs:
       
           - name: Get Kubeconfig
             run: |
-              az aks get-credentials --resource-group $RESOURCE_GROUP --name cetha-api-AKS $AKS_CLUSTER --overwrite-existing
+              az aks get-credentials --resource-group $RESOURCE_GROUP --name $AKS_CLUSTER --overwrite-existing
       
           - name: Check Pod Status
             run: |
