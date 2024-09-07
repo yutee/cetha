@@ -16,7 +16,7 @@ terraform {
     resource_group_name   = "terraformstatesRG"
     storage_account_name  = "terraformstate737"
     container_name        = "tfstateblob"
-    key                   = "terraform_ci.tfstate"
+    key                   = "terraform.tfstate"
   }
 
   required_version = ">= 1.1.0"
