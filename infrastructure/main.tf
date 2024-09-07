@@ -8,6 +8,7 @@ module "governance" {
   source              = "./modules/governance"
   tenant_id           = var.tenant_id
   subscription_id     = var.subscription_id
+  create_user         = false
 }
 
 module "network" {

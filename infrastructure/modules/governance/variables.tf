@@ -1,3 +1,8 @@
+variable "create_user" {
+  description = "Create a new user in Azure AD"
+  type        = bool
+}
+
 variable "tenant_id" {
   description = "The Tenant ID of your Azure Active Directory"
   type        = string
