@@ -7,18 +7,17 @@ _Architectural structure of the infrastructure:_
     ![architecture diagram](./00-images/diagram.png)
 
 To complete the project, the following tools were used:
-For this project I will be using:
 - __NodeJS__ - Web api
 - __Azure__ -  Cloud provider
 - __Azure Kubernetes cluster__
 - __Terraform__ - Infrastructure as Code
-- __Azure blob storage__ - Terraform emote backend
+- __Azure blob storage__ - Terraform remote backend
 - __Prometheus & Grafana__ - Monitoring
 - __Github Actions - Continous__ Integration/Deployment
 
-Terraform is ideal for setting up and managing the infrastructure for Kubernetes, particularly with services like AWS EKS. Kubernetes orchestrates and manages containerized applications, while Helm simplifies application deployment, updates, and management. By using Terraform's Helm provider, you can manage both infrastructure and application deployments within a single Terraform script, making it a core requirement for this task. Prometheus and Grafana are employed to observe the state of the cluster.
+Terraform is ideal for setting up and managing the infrastructure for Kubernetes, particularly with services like AWS EKS, AKS and GKE. Kubernetes orchestrates and manages containerized applications, while Helm, a kubernetes package manager simplifies application deployment, updates, and management. By using Terraform's Helm provider, you can manage both automate infrastructure and application deployments within a single Terraform codebase, which is a core requirement for this task. Prometheus and Grafana are employed to observe the state of the cluster.
 All resources are provisioned to AKS cluster on Azure.
-Github actions to automate continous integration and delivery process.
+Github actions is used to automate the continous integration and delivery process.
 
 The project folder has three major directories:
 - `api` - the nodejs(express) api code and corresponding dockerfile
@@ -28,7 +27,7 @@ The project folder has three major directories:
 ### Deliverables
 
 __The API:__
-The [NodeJS application](./api/app.js) is a simple api that returns the current time when queried.
+The [NodeJS application](./api/app.js) is a simple api in json format that returns the current time when queried.
 
 __Terraform:__
 The [Terraform configuration](./infrastructure/) will:
@@ -46,8 +45,8 @@ It deploys the updated Helm chart to a Kubernetes cluster using Terraform.
 - __Test Deployment:__
 It tests the deployed service by making an HTTP request to a specific endpoint.
 
-__Running the application:__
-To utilize this setup, there are things you need to have in place first:
+### Running the application:
+To utilize this setup, you need to have:
 - An azure subscription
 - Terraform, Kubectl, AzCLI installed and configured
 - An azure service principal
@@ -75,14 +74,14 @@ node app.js
 ```bash
 cd infrasctructure
 
-# add env cariables
+# add env variables
 echo TF_VAR_client_id=<CLIENT_ID>
 echo TF_VAR_client_secret=<CLIENT_SECRET>
 echo TF_VAR_subscription_id=<SUBSCRIPTION_ID>
 echo TF_VAR_tenant_id=<TENANT_ID>
 ```
 
-Considering nature of the project, no external variables was needed. If yo want to customize any settting at this point, you should go through the code.
+Considering nature of the project, no external variables was needed. If yo want to customize any settting at this point, you should go through the terraform code, personalized changes to the configuration can be made in the root module main.tf file.
 
 - __Set remote backend:__
 Azure blob storage was used as remote backend. Open the [providers.tf](./infrastructure/providers.tf) file and edit this block.
@@ -94,6 +93,7 @@ Azure blob storage was used as remote backend. Open the [providers.tf](./infrast
     key                   = "terraform.tfstate"
   }
 ```
+Ensure you are authenticated with azure using the storage account details provider in the block. The blob storage should also be created already.
 
 - __Run the application:__
 ```bash
@@ -147,10 +147,11 @@ _updated tag on dockerhub_
 
 _text file with time endpoint was queried_
 ![tendpointag](./00-images/Screenshot%202024-09-04%20at%2016.11.29.png)
-The endpoint_check.txt file uploaded as an artifact. It contains the result gotten when api is queried.
+The endpoint_check.txt file uploaded as an artifact. It contains the result gotten when api is queried. 
 
 - __Possible Improvements:__
 As with all software, there is always updates and patches, and this project is no different. There are certain areas that can be worked on:
+
     - TSL/SSL Certificates
     - Alerting using Prometheus/Alertmanager
     - Implement wider range of policies using open policy agent
